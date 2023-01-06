@@ -33,3 +33,4 @@ You need to have Unifi Controller accessible by the plugin.
 }
 ```
 
+*This project is an updated version of [homebridge-unifi-guest-wlan-switch](https://www.npmjs.com/package/homebridge-unifi-guest-wlan-switch) with the dependancies fixed to allow it to work on the current version of HomeBridge.*
