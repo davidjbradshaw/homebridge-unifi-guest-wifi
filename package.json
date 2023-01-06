@@ -1,0 +1,36 @@
+{
+  "name": "homebridge-unifi-guest-wlan-switch",
+  "version": "1.0.1",
+  "description": "A homebridge plugin to turn unifi guest wlan on/off",
+  "main": "dist.js",
+  "scripts": {
+    "build": "babel index.js --out-file dist.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "homebridge": "~0.4.37"
+  },
+  "keywords": [
+    "homebridge",
+    "homebridge-plugin",
+    "unifi",
+    "wlan",
+    "guest",
+    "switch"
+  ],
+  "author": "Yun Lai <lyonlai1984@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "babel-runtime": "^6.26.0",
+    "bluebird": "^3.5.1",
+    "bluebird-retry": "^0.11.0",
+    "node-unifi": "^1.2.2",
+    "ramda": "^0.25.0"
+  },
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1"
+  }
+}
