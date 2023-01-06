@@ -1,6 +1,6 @@
 # Homebridge Unifi Guest Wifi Switch
 
-This plugin let you control your guest wifi from Unifi Controller.
+This plugin let you control your Guest Wifi on your [Unifi Controller](https://www.ui.com/download-software/).
 
 ## Installation
 
@@ -8,7 +8,7 @@ This plugin let you control your guest wifi from Unifi Controller.
 
 ## Prerequisite
 
-You need to have Unifi Controller accessible by the plugin.
+Make a **local account** for just this plugin on your controller.
 
 ## Example Config
 
