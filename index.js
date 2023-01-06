@@ -82,7 +82,7 @@ function UnifyGuestWifiPlatform(log, config, api) {
               });
             })
             .catch(e => {
-              this.log("error loading guest wifies", e);
+              this.log("error loading guest wifi", e);
               throw e;
             });
         },
