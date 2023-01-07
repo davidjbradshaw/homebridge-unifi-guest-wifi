@@ -2,10 +2,6 @@
 
 This plugin let you control the Guest Wifi on your [Unifi Controller](https://www.ui.com/download-software/).
 
-## Installation
-
-`npm install -g homebridge-unifi-guest-wifi-switch`
-
 ## Prerequisite
 
 Make a **local account** for just this plugin on your controller.
@@ -20,13 +16,16 @@ Make a **local account** for just this plugin on your controller.
   "platforms": [
     {
       "platform" : "UnifyGuestWifiPlatform",
-      "name" : "Guest Controller",
+      "name" : "Guest Wifi Controller",
       "controller": {
+         "username": "[your-guest-wifi-admin]", // your unifi controller username
+         "password": "[your-strong-guest-wifi-admin-password]", //your unifi controller password
          "address": "192.168.1.1", // address to your unifi controller
+
+         // Optionals with default values
          "port": 443, // port of your unifi controller
-         "username": "your-guest-wifi-admin", // your unifi controller username
-         "password": "yourguestwifiadminpassword", //your unifi controller password
-         "updateInterval": 60000 // guest wifi update interval
+         "sslVerify": false // verify SSL cert
+         "updateInterval": 60 // guest wifi update interval in seconds
       }
     }
   ]

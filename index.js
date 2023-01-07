@@ -3,6 +3,10 @@ const Bluebird = require("bluebird")
 const R = require("ramda")
 const retry = require("bluebird-retry")
 
+const SECOND = 1000
+const DEFAULT_INTERVAL = 60 * SECOND
+const DEFAULT_PORT = 443
+
 let Accessory, Service, Characteristic, UUIDGen
 
 module.exports = function(homebridge) {
@@ -41,8 +45,8 @@ function UnifyGuestWifiPlatform(log, config, api) {
   
   this.unifiController = new unifi.Controller({
     host: this.controllerConfig.address,
-    port: this.controllerConfig.port || 8443,
-    sslverify: false,
+    port: this.controllerConfig.port || DEFAULT_PORT,
+    sslverify: this.controllerConfig.sslVerify || false,
   })
   
   // Bluebird.promisifyAll(this.unifiController)
@@ -70,8 +74,8 @@ function UnifyGuestWifiPlatform(log, config, api) {
             .then(() => {
               this.log("Logged into Unifi Controller")
               return this.loadGuestWifi().then(() => {
-                const interval = this.controllerConfig.updateInterval || 1000000
-                
+                const interval = this.controllerConfig.updateInterval * SECOND || DEFAULT_INTERVAL
+  
                 this.log(`Setting up update interval: ${interval}`)
                 
                 this.updateInterval = setInterval(() => {
