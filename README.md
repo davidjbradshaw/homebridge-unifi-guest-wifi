@@ -2,7 +2,7 @@
 
 This plugin gives you an on/off switch for your Unifi Guest Wifi.
 
-*When you turn a wifi network on or off in Unifi, it causes your APs to restart with the new settig. This means you will loose all your wifi networks for a few seconds, unless you have your Guest Network on it's own seporate AP.*
+**Please note that when you turn a wifi network on or off in Unifi, it causes your APs to restart with the new settig. This means you will loose all your wifi networks for a few seconds, unless you have your Guest Network on it's own seporate AP.**
 
 ## Prerequisite
 
