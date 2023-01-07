@@ -1,5 +1,5 @@
 {
-  "name": "homebridge-unifi-guest-wifi-switch",
+  "name": "homebridge-unifi-guest-wifi",
   "version": "1.1.0",
   "description": "A homebridge plugin to turn Unifi guest wifi on/off",
   "main": "dist.js",
