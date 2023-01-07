@@ -1,6 +1,7 @@
 {
   "name": "homebridge-unifi-guest-wifi",
   "version": "1.1.0",
+  "homepage": "https://github.com/davidjbradshaw/homebridge-unifi-guest-wifi",
   "description": "A homebridge plugin to turn Unifi guest wifi on/off",
   "main": "dist.js",
   "scripts": {
@@ -19,7 +20,7 @@
     "switch",
     "wifi"
   ],
-  "author": "David J. Bradshaw",
+  "authors": ["David J. Bradshaw", "Yun Lai"],
   "license": "MIT",
   "dependencies": {
     "babel-runtime": "^6.26.0",
