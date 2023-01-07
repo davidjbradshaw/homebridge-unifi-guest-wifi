@@ -16,7 +16,8 @@
     "unifi",
     "wlan",
     "guest",
-    "switch"
+    "switch",git 
+    "wifi"
   ],
   "author": "David J. Bradshaw",
   "license": "MIT",
