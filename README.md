@@ -34,6 +34,8 @@ Make a **local account** for just this plugin on your [Unifi Controller](https:/
 }
 ```
 
+## Notes
+
 *This project is an updated version of [homebridge-unifi-guest-wlan-switch](https://www.npmjs.com/package/homebridge-unifi-guest-wlan-switch) with the dependancies fixed to allow it to work on the current versions of the **Unifi Controller** and **HomeBridge**.*
 
 *Due to the different way version 2 of [Node-Unifi](https://github.com/jens-maus/node-unifi) handles multiple sites, support for them has been removed and you will instead need a HomeBridge for each seporate site. Say hi if your the one person this change is going to effect, I would love to know what your use case is.*
