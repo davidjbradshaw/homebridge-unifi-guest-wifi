@@ -12,25 +12,18 @@ Make a **local account** for just this plugin on your [Unifi Controller](https:/
 
 ```
 {
-  "bridge": {
-    ... // homebridge configuration
-  },
-  "platforms": [
-    {
-      "platform" : "UnifyGuestWifiPlatform",
-      "name" : "Guest Wifi Controller",
-      "controller": {
-         "username": "[your-guest-wifi-admin]", // your unifi controller username
-         "password": "[your-strong-guest-wifi-admin-password]", //your unifi controller password
-         "address": "192.168.1.1", // address to your unifi controller
+  "platform" : "UnifyGuestWifiPlatform",
+  "name" : "Guest Wifi Controller",
+  "controller": {
+      "username": "[your-guest-wifi-admin]", // your unifi controller username
+      "password": "[your-strong-guest-wifi-admin-password]", //your unifi controller password
+      "address": "192.168.1.1", // address to your unifi controller
 
-         // Optionals with default values
-         "port": 443, // port of your unifi controller
-         "sslVerify": false // verify SSL cert
-         "updateInterval": 60 // guest wifi update interval in seconds
-      }
-    }
-  ]
+      // Optionals with default values
+      "port": 443, // port of your unifi controller
+      "sslVerify": false // verify SSL cert
+      "updateInterval": 60 // guest wifi update interval in seconds
+  }
 }
 ```
 
