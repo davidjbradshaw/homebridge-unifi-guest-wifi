@@ -10,7 +10,7 @@ Make a **local account** for just this plugin on your [Unifi Controller](https:/
 
 ## Example Config
 
-```
+```jsonc
 {
   "platform" : "UnifyGuestWifiPlatform",
   "name" : "Guest Wifi Controller",
