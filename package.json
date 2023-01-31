@@ -5,11 +5,14 @@
   "description": "A homebridge plugin to turn Unifi guest wifi on/off",
   "main": "dist.js",
   "scripts": {
-    "build": "babel index.js --out-file dist.js"
+    "build": "babel index.js --out-file dist.js",
+    "eslint": "eslint --color index.js *.{json,md} ",
+    "eslint:fix": "eslint --color --fix index.js *.{md}",
+    "eslint:print": "eslint --print-config ./tsconfig.json"
   },
   "engines": {
-    "node": ">=10.17.0",
-    "homebridge": ">=0.4.22"
+    "node": ">=14.0.0",
+    "homebridge": ">=1.0.0"
   },
   "keywords": [
     "homebridge",
@@ -20,7 +23,10 @@
     "switch",
     "wifi"
   ],
-  "authors": ["David J. Bradshaw", "Yun Lai"],
+  "authors": [
+    "David J. Bradshaw",
+    "Yun Lai"
+  ],
   "license": "MIT",
   "dependencies": {
     "babel-runtime": "^6.26.0",
@@ -32,6 +38,29 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.7.0"
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^8.33.0",
+    "eslint-config-adjunct": "^4.11.2",
+    "eslint-config-auto": "^0.7.3",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-array-func": "^3.1.8",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-html": "^7.1.0",
+    "eslint-plugin-json": "^3.1.0",
+    "eslint-plugin-markdown": "^3.0.0",
+    "eslint-plugin-no-constructor-bind": "^2.0.4",
+    "eslint-plugin-no-secrets": "^0.8.9",
+    "eslint-plugin-no-unsanitized": "^4.0.2",
+    "eslint-plugin-no-use-extend-native": "^0.5.0",
+    "eslint-plugin-optimize-regex": "^1.2.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-ramda": "^2.5.1",
+    "eslint-plugin-scanjs-rules": "^0.2.1",
+    "eslint-plugin-security": "^1.7.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-sonarjs": "^0.18.0",
+    "eslint-plugin-switch-case": "^1.1.2",
+    "eslint-plugin-unicorn": "^45.0.2",
+    "prettier": "^2.8.3"
   }
 }
