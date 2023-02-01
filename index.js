@@ -54,7 +54,7 @@ function UnifyGuestWifiPlatform(log, config, api) {
               return this.loadGuestWifi()
             })
             .then(() => {
-              const interval = Number(this.controllerConfig.updateInterval) || DEFAULT_INTERVAL
+              const interval = Number(this.controllerConfig.updateInterval) * SECOND || DEFAULT_INTERVAL
 
               this.log(`Setting up update interval:`, interval, this.controllerConfig.updateInterval)
               

@@ -1,6 +1,6 @@
 {
   "name": "homebridge-unifi-guest-wifi",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "homepage": "https://github.com/davidjbradshaw/homebridge-unifi-guest-wifi",
   "description": "A homebridge plugin to turn Unifi guest wifi on/off",
   "main": "dist.js",
