@@ -54,9 +54,9 @@ function UnifyGuestWifiPlatform(log, config, api) {
               return this.loadGuestWifi()
             })
             .then(() => {
-              const interval = this.controllerConfig.updateInterval * SECOND || DEFAULT_INTERVAL
+              const interval = Number(this.controllerConfig.updateInterval) || DEFAULT_INTERVAL
 
-              this.log(`Setting up update interval: ${interval}`)
+              this.log(`Setting up update interval:`, interval, this.controllerConfig.updateInterval)
               
               this.updateInterval = setInterval(() => {
                 this.log("Updating Guest Wifi Controller")
@@ -183,11 +183,11 @@ UnifyGuestWifiPlatform.prototype.setupAccessory = function(
 
       const { wlan } = accessory.context
 
-      this.log(
-        accessory.displayName,
-        `Get Guest Wifi -> ${this.generateAccessoryName(wlan)}, ${ 
-          wlan.enabled}`
-      )
+      // this.log(
+      //   accessory.displayName,
+      //   `Get Guest Wifi -> ${this.generateAccessoryName(wlan)}, ${ 
+      //     wlan.enabled}`
+      // )
       
       callback(null, wlan.enabled)
     })

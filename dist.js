@@ -41,18 +41,19 @@ function UnifyGuestWifiPlatform(log, config, api) {
         this.log("Logging into Unifi Controller", this.controllerConfig.address, this.controllerConfig.port);
         return this.unifiController.login(this.controllerConfig.username, this.controllerConfig.password).then(() => {
           this.log("Logged into Unifi Controller");
-          return this.loadGuestWifi().then(() => {
-            const interval = this.controllerConfig.updateInterval * SECOND || DEFAULT_INTERVAL;
+          return this.loadGuestWifi();
+        }).then(() => {
+          const interval = Number(this.controllerConfig.updateInterval) || DEFAULT_INTERVAL;
 
-            this.log(`Setting up update interval: ${interval}`);
+          this.log(`Setting up update interval:`, interval, this.controllerConfig.updateInterval);
 
-            this.updateInterval = setInterval(() => {
-              this.log("Updating Guest Wifi Controller");
-              this.loadGuestWifi();
-            }, interval);
+          this.updateInterval = setInterval(() => {
+            this.log("Updating Guest Wifi Controller");
+            this.loadGuestWifi();
+          }, interval);
 
-            this.log("DidFinishLaunching");
-          });
+          this.log("DidFinishLaunching");
+          return true;
         }).catch(error => {
           this.log("error loading guest wifi", error);
           throw error;
@@ -145,7 +146,11 @@ UnifyGuestWifiPlatform.prototype.setupAccessory = function (accessory, configure
 
     const { wlan } = accessory.context;
 
-    this.log(accessory.displayName, `Get Guest Wifi -> ${this.generateAccessoryName(wlan)}, ${wlan.enabled}`);
+    // this.log(
+    //   accessory.displayName,
+    //   `Get Guest Wifi -> ${this.generateAccessoryName(wlan)}, ${ 
+    //     wlan.enabled}`
+    // )
 
     callback(null, wlan.enabled);
   });
