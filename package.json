@@ -7,7 +7,7 @@
   "scripts": {
     "build": "babel index.js --out-file dist.js",
     "eslint": "eslint --color index.js *.{json,md} ",
-    "eslint:fix": "eslint --color --fix index.js *.{md}",
+    "eslint:fix": "eslint --color --fix index.js *.{json,md}",
     "eslint:print": "eslint --print-config ./tsconfig.json"
   },
   "engines": {
