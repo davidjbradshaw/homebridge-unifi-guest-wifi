@@ -1,41 +1,19 @@
-const unifi = require("node-unifi")
-const Bluebird = require("bluebird")
-const R = require("ramda")
-const retry = require("bluebird-retry")
+import Bluebird from "bluebird"
+import retry from "bluebird-retry"
+import unifi from "node-unifi"
+import { compose, filter, flatten } from "ramda"
 
 const SECOND = 1000
 const DEFAULT_INTERVAL = 60 * SECOND
 const DEFAULT_PORT = 443
 
-let Accessory, Service, Characteristic, UUIDGen
-
-module.exports = function(homebridge) {
-  console.log("homebridge API version: " + homebridge.version)
-  
-  // Accessory must be created from PlatformAccessory Constructor
-  Accessory = homebridge.platformAccessory
-  
-  // Service and Characteristic are from hap-nodejs
-  Service = homebridge.hap.Service
-  Characteristic = homebridge.hap.Characteristic
-  UUIDGen = homebridge.hap.uuid
-  
-  // For platform plugin to be considered as dynamic platform plugin,
-  // registerPlatform(pluginName, platformName, constructor, dynamic), dynamic must be true
-  homebridge.registerPlatform(
-    "homebridge-unifi-guest-wifi-platform",
-    "UnifyGuestWifiPlatform",
-    UnifyGuestWifiPlatform,
-    true
-  )
-}
+let Accessory; let Service; let Characteristic; let UUIDGen
 
 // Platform constructor
 // config may be null
 // api may be null if launched from old homebridge version
 function UnifyGuestWifiPlatform(log, config, api) {
   log("UnifyGuestWifiPlatform Init")
-  var platform = this
   this.log = log
   this.config = config
   this.accessories = {}
@@ -73,22 +51,24 @@ function UnifyGuestWifiPlatform(log, config, api) {
             )
             .then(() => {
               this.log("Logged into Unifi Controller")
-              return this.loadGuestWifi().then(() => {
-                const interval = this.controllerConfig.updateInterval * SECOND || DEFAULT_INTERVAL
-  
-                this.log(`Setting up update interval: ${interval}`)
-                
-                this.updateInterval = setInterval(() => {
-                  this.log("Updating Guest Wifi Controller")
-                  this.loadGuestWifi()
-                }, interval)
-                
-                platform.log("DidFinishLaunching")
-              })
+              return this.loadGuestWifi()
             })
-            .catch(e => {
-              this.log("error loading guest wifi", e)
-              throw e
+            .then(() => {
+              const interval = Number(this.controllerConfig.updateInterval) || DEFAULT_INTERVAL
+
+              this.log(`Setting up update interval:`, interval, this.controllerConfig.updateInterval)
+              
+              this.updateInterval = setInterval(() => {
+                this.log("Updating Guest Wifi Controller")
+                this.loadGuestWifi()
+              }, interval)
+              
+              this.log("DidFinishLaunching")
+              return true
+            })
+            .catch(error => {
+              this.log("error loading guest wifi", error)
+              throw error
             })
           },
         {
@@ -98,19 +78,20 @@ function UnifyGuestWifiPlatform(log, config, api) {
         }
       ).then(() => {
         this.ready = true
-      })
+        return true
+      }).catch(this.log)
     })
   }
 }
 
 UnifyGuestWifiPlatform.prototype.loadGuestWifi = async function() {
-  this.log("loading guest wifies")
+  // this.log("loading guest wifies")
   
   let wlans = await this.unifiController.getWLanSettings()
   
-  wlans = R.compose(R.filter(wlan => wlan.is_guest), R.flatten)(wlans)
+  wlans = compose(filter(wlan => wlan.is_guest), flatten)(wlans)
   
-  this.log("loaded wlan settings") // , wlans)
+  // this.log("loaded wlan settings") // , wlans)
   
   if (wlans.length <= 0) {
     return
@@ -124,7 +105,7 @@ UnifyGuestWifiPlatform.prototype.loadGuestWifi = async function() {
 UnifyGuestWifiPlatform.prototype.addGuestWifiAccessories = async function(
   wlans
 ) {
-  this.log(`adding ${wlans.length} guest wifi`)
+  // this.log(`adding ${wlans.length} guest wifi`)
   
   await Bluebird.all(
     wlans.map(wlan => this.addGuestWifiAccessory(wlan))
@@ -140,7 +121,7 @@ UnifyGuestWifiPlatform.prototype.setupAccessory = function(
   accessory,
   configure
 ) {
-  const context = accessory.context
+  const {context, UUID} = accessory
   
   this.log(
     `Setting up accessory for Guest Wifi: ${this.generateAccessoryName(
@@ -149,14 +130,14 @@ UnifyGuestWifiPlatform.prototype.setupAccessory = function(
   )
   
   accessory.on("identify", (paired, callback) => {
-    this.log(newAccessory.displayName, "Identify!!!")
+    // this.log(newAccessory.displayName, "Identify!!!")
     callback()
   })
   // Plugin can save context on accessory to help restore accessory in configureAccessory()
   // newAccessory.context.something = "Something"
 
   // Make sure you provided a name for service, otherwise it may not visible in some HomeKit apps
-  this.accessories[accessory.UUID] = accessory
+  this.accessories[UUID] = accessory
   
   this.log(
     `getting service switch ${accessory.getService(
@@ -173,23 +154,21 @@ UnifyGuestWifiPlatform.prototype.setupAccessory = function(
     .getCharacteristic(Characteristic.On)
     .on("set", async (value, callback) => {
       if (!this.ready) {
-        callback(new Error("unifi controller is not ready yet."))
+        callback(new Error("Set Failed: Unifi Controller is not ready yet."))
       }
 
-      const { wlan } = accessory.context
+      const { context: {wlan }, displayName } = accessory
     
-      const wlanName = this.generateAccessoryName(
-        context.wlan
-      )
+      const wlanName = this.generateAccessoryName( wlan )
 
-      this.log(`${accessory.displayName} requested ${value} id ${wlan._id.trim()}`)
+      this.log(`${displayName} requested ${value} id ${wlan._id.trim()}`)
       
       await this.unifiController.disableWLan(String(wlan._id), !value)
       
       wlan.enabled = value
 
       this.log(
-        accessory.displayName,
+        displayName,
         `Set Guest Wifi -> ${wlanName}, ${value}`
       )
       
@@ -197,18 +176,18 @@ UnifyGuestWifiPlatform.prototype.setupAccessory = function(
     })
     .on("get", callback => {
       if (!this.ready) {
-        this.log("unifi controller is not ready yet.")
-        callback(new Error("unifi controller is not ready yet."))
+        // this.log("unifi controller is not ready yet.")
+        callback(new Error("Get Failed: unifi controller is not ready yet."))
         return
       }
 
       const { wlan } = accessory.context
 
-      this.log(
-        accessory.displayName,
-        `Get Guest Wifi -> ${this.generateAccessoryName(wlan)}, ` +
-          wlan.enabled
-      )
+      // this.log(
+      //   accessory.displayName,
+      //   `Get Guest Wifi -> ${this.generateAccessoryName(wlan)}, ${ 
+      //     wlan.enabled}`
+      // )
       
       callback(null, wlan.enabled)
     })
@@ -231,7 +210,7 @@ UnifyGuestWifiPlatform.prototype.addGuestWifiAccessory = async function(
 
   this.log(`Guest Wifi: ${name}, does not exists, adding new accessory`)
   
-  var newAccessory = new Accessory(name, uuid)
+  const newAccessory = new Accessory(name, uuid)
   
   newAccessory.context = { wlan }
   
@@ -258,7 +237,7 @@ UnifyGuestWifiPlatform.prototype.registerAccessory = function(accessory) {
 // Developer can configure accessory at here (like setup event handler).
 // Update current value.
 UnifyGuestWifiPlatform.prototype.configureAccessory = function(accessory) {
-  this.log(accessory.displayName, "Configure Accessory", accessory)
+  this.log(accessory.displayName, "Configure Accessory") // , accessory)
   
   if (this.accessories[accessory.UUID]) {
     return
@@ -267,17 +246,18 @@ UnifyGuestWifiPlatform.prototype.configureAccessory = function(accessory) {
   // Set the accessory to reachable if plugin can currently process the accessory,
   // otherwise set to false and update the reachability later by invoking
   // accessory.updateReachability()
-  accessory.reachable = true
+  accessory.reachable = true // eslint-disable-line no-param-reassign
   
   this.setupAccessory(accessory, true)
 }
 
 UnifyGuestWifiPlatform.prototype.updateAccessoriesReachability = function() {
-  this.log("Update Reachability")
-  for (var index in this.accessories) {
-    var accessory = this.accessories[index]
-    accessory.updateReachability(false)
-  }
+  // this.log("Update Reachability")
+  // for (const index in this.accessories) {
+  //   const accessory = this.accessories[index]
+  //   accessory.updateReachability(false)
+  // }
+  Object.values(this.accessories).forEach(accessory => accessory.updateReachability(false))
 }
 
 // Sample function to show how developer can remove accessory dynamically from outside event
@@ -290,4 +270,26 @@ UnifyGuestWifiPlatform.prototype.removeAccessory = function() {
   )
   
   this.accessories = []
+}
+
+
+export default function unifiGuestWlan(homebridge) {
+  // console.log(`homebridge API version: ${  homebridge.version}`)
+  
+  // Accessory must be created from PlatformAccessory Constructor
+  Accessory = homebridge.platformAccessory
+  
+  // Service and Characteristic are from hap-nodejs
+  Service = homebridge.hap.Service
+  Characteristic = homebridge.hap.Characteristic
+  UUIDGen = homebridge.hap.uuid
+  
+  // For platform plugin to be considered as dynamic platform plugin,
+  // registerPlatform(pluginName, platformName, constructor, dynamic), dynamic must be true
+  homebridge.registerPlatform(
+    "homebridge-unifi-guest-wifi-platform",
+    "UnifyGuestWifiPlatform",
+    UnifyGuestWifiPlatform,
+    true
+  )
 }
