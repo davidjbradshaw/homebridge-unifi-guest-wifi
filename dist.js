@@ -43,19 +43,19 @@ function UnifyGuestWifiPlatform(log, config, api) {
           this.log("Logged into Unifi Controller");
           return this.loadGuestWifi();
         }).then(() => {
-          const interval = Number(this.controllerConfig.updateInterval) || DEFAULT_INTERVAL;
+          const interval = Number(this.controllerConfig.updateInterval) * SECOND || DEFAULT_INTERVAL;
 
           this.log(`Setting up update interval:`, interval, this.controllerConfig.updateInterval);
 
           this.updateInterval = setInterval(() => {
-            this.log("Updating Guest Wifi Controller");
+            this.log.debug("Updating Guest Wifi Controller");
             this.loadGuestWifi();
           }, interval);
 
-          this.log("DidFinishLaunching");
+          this.log.debug("DidFinishLaunching");
           return true;
         }).catch(error => {
-          this.log("error loading guest wifi", error);
+          this.log.error("error loading guest wifi", error);
           throw error;
         });
       }, {
@@ -71,25 +71,25 @@ function UnifyGuestWifiPlatform(log, config, api) {
 }
 
 UnifyGuestWifiPlatform.prototype.loadGuestWifi = async function () {
-  // this.log("loading guest wifies")
+  this.log.debug("loading guest wifies");
 
   let wlans = await this.unifiController.getWLanSettings();
 
   wlans = compose(filter(wlan => wlan.is_guest), flatten)(wlans);
 
-  // this.log("loaded wlan settings") // , wlans)
+  this.log.debug("loaded wlan settings"); // , wlans)
 
   if (wlans.length <= 0) {
     return;
   }
 
-  this.log(`loaded ${wlans.length} wlans`, wlans.map(wlan => wlan.name));
+  this.log.debug(`loaded ${wlans.length} wlans`, wlans.map(wlan => wlan.name));
 
   await this.addGuestWifiAccessories(wlans);
 };
 
 UnifyGuestWifiPlatform.prototype.addGuestWifiAccessories = async function (wlans) {
-  // this.log(`adding ${wlans.length} guest wifi`)
+  this.log.debug(`adding ${wlans.length} guest wifi`);
 
   await Bluebird.all(wlans.map(wlan => this.addGuestWifiAccessory(wlan)));
 };
@@ -104,7 +104,7 @@ UnifyGuestWifiPlatform.prototype.setupAccessory = function (accessory, configure
   this.log(`Setting up accessory for Guest Wifi: ${this.generateAccessoryName(context.wlan)}`);
 
   accessory.on("identify", (paired, callback) => {
-    // this.log(newAccessory.displayName, "Identify!!!")
+    // this.log.debug(newAccessory.displayName, "Identify!!!")
     callback();
   });
   // Plugin can save context on accessory to help restore accessory in configureAccessory()
@@ -139,18 +139,14 @@ UnifyGuestWifiPlatform.prototype.setupAccessory = function (accessory, configure
     callback();
   }).on("get", callback => {
     if (!this.ready) {
-      // this.log("unifi controller is not ready yet.")
+      this.log.debug("unifi controller is not ready yet.");
       callback(new Error("Get Failed: unifi controller is not ready yet."));
       return;
     }
 
     const { wlan } = accessory.context;
 
-    // this.log(
-    //   accessory.displayName,
-    //   `Get Guest Wifi -> ${this.generateAccessoryName(wlan)}, ${ 
-    //     wlan.enabled}`
-    // )
+    this.log.debug(accessory.displayName, `Get Guest Wifi -> ${this.generateAccessoryName(wlan)}, ${wlan.enabled}`);
 
     callback(null, wlan.enabled);
   });
@@ -159,17 +155,17 @@ UnifyGuestWifiPlatform.prototype.setupAccessory = function (accessory, configure
 UnifyGuestWifiPlatform.prototype.addGuestWifiAccessory = async function (wlan) {
   const name = this.generateAccessoryName(wlan);
 
-  this.log(`Adding Guest Wifi: ${name}`);
+  this.log.debug(`Adding Guest Wifi: ${name}`);
 
   const uuid = this.generateAccessoryId(wlan);
 
   if (this.accessories[uuid]) {
-    this.log(`Guest Wifi: ${name}, exists, updating value instead`);
+    this.log.debug(`Guest Wifi: ${name}, exists, updating value instead`);
     this.accessories[uuid].context = { wlan };
     return;
   }
 
-  this.log(`Guest Wifi: ${name}, does not exists, adding new accessory`);
+  this.log.debug(`Guest Wifi: ${name}, does not exists, adding new accessory`);
 
   const newAccessory = new Accessory(name, uuid);
 
@@ -205,7 +201,7 @@ UnifyGuestWifiPlatform.prototype.configureAccessory = function (accessory) {
 };
 
 UnifyGuestWifiPlatform.prototype.updateAccessoriesReachability = function () {
-  // this.log("Update Reachability")
+  this.log.debug("Update Reachability");
   // for (const index in this.accessories) {
   //   const accessory = this.accessories[index]
   //   accessory.updateReachability(false)

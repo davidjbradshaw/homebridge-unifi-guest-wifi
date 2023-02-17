@@ -1,6 +1,6 @@
 {
   "name": "homebridge-unifi-guest-wifi",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "homepage": "https://github.com/davidjbradshaw/homebridge-unifi-guest-wifi",
   "description": "A homebridge plugin to turn Unifi guest wifi on/off",
   "main": "dist.js",
@@ -9,7 +9,10 @@
     "build": "babel index.js --out-file dist.js",
     "eslint": "eslint --color index.js *.{json,md} ",
     "eslint:fix": "eslint --color --fix index.js *.{json,md}",
-    "eslint:print": "eslint --print-config ./tsconfig.json"
+    "eslint:print": "eslint --print-config ./tsconfig.json",
+    "prepublishOnly": "npm run eslint && npm run build",
+    "postpublish" : "PACKAGE_VERSION=$(cat package.json | grep \\\"version\\\" | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag v$PACKAGE_VERSION && git push --tags"
+
   },
   "engines": {
     "node": ">=14.0.0",
