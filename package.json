@@ -1,6 +1,7 @@
 {
+  "displayName": "Unifi Guest WiFi",
   "name": "homebridge-unifi-guest-wifi",
-  "version": "2.0.0",
+  "version": "2.0.5",
   "homepage": "https://github.com/davidjbradshaw/homebridge-unifi-guest-wifi",
   "description": "A homebridge plugin to turn Unifi guest wifi on/off",
   "main": "dist.js",
@@ -9,7 +10,10 @@
     "build": "babel index.js --out-file dist.js",
     "eslint": "eslint --color index.js *.{json,md} ",
     "eslint:fix": "eslint --color --fix index.js *.{json,md}",
-    "eslint:print": "eslint --print-config ./tsconfig.json"
+    "eslint:print": "eslint --print-config ./tsconfig.json",
+    "prepublishOnly": "npm run eslint && npm run build",
+    "postpublish" : "PACKAGE_VERSION=$(cat package.json | grep \\\"version\\\" | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag v$PACKAGE_VERSION && git push --tags"
+
   },
   "engines": {
     "node": ">=14.0.0",
@@ -40,7 +44,7 @@
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
-    "eslint": "^8.33.0",
+    "eslint": "^8.34.0",
     "eslint-config-adjunct": "^4.11.2",
     "eslint-config-auto": "^0.7.3",
     "eslint-config-prettier": "^8.6.0",
@@ -57,11 +61,11 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-ramda": "^2.5.1",
     "eslint-plugin-scanjs-rules": "^0.2.1",
-    "eslint-plugin-security": "^1.7.0",
+    "eslint-plugin-security": "^1.7.1",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-sonarjs": "^0.18.0",
     "eslint-plugin-switch-case": "^1.1.2",
     "eslint-plugin-unicorn": "^45.0.2",
-    "prettier": "^2.8.3"
+    "prettier": "^2.8.4"
   }
 }
