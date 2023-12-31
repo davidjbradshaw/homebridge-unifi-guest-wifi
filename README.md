@@ -21,7 +21,7 @@ Make a **local account** for just this plugin on your [Unifi Controller](https:/
 
     // Optionals with default values
     "port": 443, // port of your unifi controller
-    "sslVerify": false // verify SSL cert
+    "sslVerify": false, // verify SSL cert
     "updateInterval": 60 // guest wifi update interval in seconds
   }
 }
